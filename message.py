@@ -62,19 +62,29 @@ class Message:
         if self.message is None:
             self.message = self.canvas.create_text(self.canvas.winfo_width() // 2,
                                                    (self.canvas.winfo_height() // 2) - 25)
-        self.canvas.itemconfigure(self.message, text=self.label.get(), font=(self.font.get(), 20))
-        self.message_speed = self.speed.get()
+        self.canvas.itemconfigure(self.message, text=self.label.get(), font=(self.font.get(), 20),
+                                  fill=self.foreground.get())
+        self.canvas.configure(bg=self.background.get())
+        self.message_speed = int(self.speed.get())
+        self.message_direction = -1 if self.direction.get() == "Left" else 1
         if self.after is not None:
             self.canvas.after_cancel(self.after)
         self.move_message()
         self.top_level.destroy()
 
     def move_message(self):
-        if self.canvas.bbox(self.message)[2] < 0:
-            self.canvas.coords(self.message, self.canvas.winfo_width() - self.canvas.bbox(self.message)[0],
-                               (self.canvas.winfo_height() // 2) - 25)
-        self.canvas.move(self.message, -1, 0)
-        self.after = self.canvas.after(self.message_speed, self.move_message)
+        if self.message_direction < 0:
+            if self.canvas.bbox(self.message)[2] < 0:
+                self.canvas.coords(self.message, self.canvas.winfo_width() + (self.get_message_width() // 2),
+                                   (self.canvas.winfo_height() // 2) - 25)
+        else:
+            if self.canvas.bbox(self.message)[0] > self.canvas.winfo_width():
+                self.canvas.coords(self.message, -(self.get_message_width() // 2), (self.canvas.winfo_height() // 2) - 25)
+        self.canvas.move(self.message, self.message_direction, 0)
+        self.after = self.canvas.after(5000 - self.message_speed + 1, self.move_message)
+
+    def get_message_width(self):
+        return (self.canvas.bbox(self.message)[2] - self.canvas.bbox(self.message)[0])
 
 if __name__ == "__main__":
     root = Tk()

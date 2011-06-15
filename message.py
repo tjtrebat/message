@@ -11,7 +11,7 @@ class Message:
     def __init__(self, root):
         self.root = root
         self.root.title("Scrolling Message")
-        self.canvas = Canvas(self.root)
+        self.canvas = Canvas(self.root, width=500, height=500)
         self.canvas.pack(fill='both', expand='yes')
         self.top_level = None
         self.label = StringVar()
@@ -24,6 +24,8 @@ class Message:
         self.speed = None
         self.direction = StringVar()
         self.direction.set("Left")
+        self.message = None
+        self.after = None
         self.add_menu()
 
     def add_menu(self):
@@ -44,7 +46,7 @@ class Message:
         Label(self.top_level, text="Label").grid(row=0, column=0)
         Entry(self.top_level, textvariable=self.label).grid(row=0, column=1, sticky="w")
         Label(self.top_level, text="Font").grid(row=1, column=0)
-        OptionMenu(self.top_level, self.font, *FONTS).grid(row=1, column=1, sticky="w")
+        OptionMenu(self.top_level, self.font, "", *FONTS).grid(row=1, column=1, sticky="w")
         Label(self.top_level, text="Foreground").grid(row=2, column=0)
         OptionMenu(self.top_level, self.foreground, "", *COLORS).grid(row=2, column=1, sticky="w")
         Label(self.top_level, text="Background").grid(row=3, column=0)
@@ -58,16 +60,21 @@ class Message:
 
     def add_message(self):
         self.canvas.delete(ALL)
-        self.message = self.canvas.create_text(190, 100, text=self.label.get())
+        self.message = self.canvas.create_text(self.canvas.winfo_width() // 2,
+                                               (self.canvas.winfo_height() // 2) - 25,
+                                               text=self.label.get(), font=self.font)
         self.message_speed = self.speed.get()
-        self.canvas.after(self.message_speed, self.move_message)
+        if self.after is not None:
+            self.canvas.after_cancel(self.after)
+        self.move_message()
         self.top_level.destroy()
 
     def move_message(self):
         if self.canvas.bbox(self.message)[2] < 0:
-            self.canvas.coords(self.message, self.canvas.winfo_width() - self.canvas.bbox(self.message)[0], 100)
+            self.canvas.coords(self.message, self.canvas.winfo_width() - self.canvas.bbox(self.message)[0],
+                               (self.canvas.winfo_height() // 2) - 25)
         self.canvas.move(self.message, -1, 0)
-        self.canvas.after(self.message_speed, self.move_message)
+        self.after = self.canvas.after(self.message_speed, self.move_message)
 
 if __name__ == "__main__":
     root = Tk()

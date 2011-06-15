@@ -11,6 +11,7 @@ class Message:
     def __init__(self, root):
         self.root = root
         self.root.title("Scrolling Message")
+        self.root.resizable(0, 0)
         self.canvas = Canvas(self.root, width=500, height=500)
         self.canvas.pack(fill='both', expand='yes')
         self.top_level = None
@@ -22,6 +23,7 @@ class Message:
         self.background = StringVar()
         self.background.set(COLORS[0])
         self.speed = None
+        self.message_speed = 0
         self.direction = StringVar()
         self.direction.set("Left")
         self.message = None
@@ -53,6 +55,8 @@ class Message:
         OptionMenu(self.top_level, self.background, "", *COLORS).grid(row=3, column=1, sticky="w")
         Label(self.top_level, text="Speed").grid(row=4, column=0)
         self.speed = Spinbox(self.top_level, from_=1, to=5000, width=4)
+        for i in range(self.message_speed):
+            self.speed.invoke('buttonup')
         self.speed.grid(row=4, column=1, sticky="w")
         Label(self.top_level, text="Direction").grid(row=5, column=0)
         OptionMenu(self.top_level, self.direction, "", "Left", "Right").grid(row=5, column=1, sticky="w")

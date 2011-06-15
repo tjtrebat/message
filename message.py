@@ -59,10 +59,10 @@ class Message:
         Button(self.top_level, text="Add", command=self.add_message).grid(row=6, column=1, pady=10, sticky="w")
 
     def add_message(self):
-        self.canvas.delete(ALL)
-        self.message = self.canvas.create_text(self.canvas.winfo_width() // 2,
-                                               (self.canvas.winfo_height() // 2) - 25,
-                                               text=self.label.get(), font=self.font)
+        if self.message is None:
+            self.message = self.canvas.create_text(self.canvas.winfo_width() // 2,
+                                                   (self.canvas.winfo_height() // 2) - 25)
+        self.canvas.itemconfigure(self.message, text=self.label.get(), font=(self.font.get(), 20))
         self.message_speed = self.speed.get()
         if self.after is not None:
             self.canvas.after_cancel(self.after)

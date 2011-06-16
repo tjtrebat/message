@@ -54,9 +54,8 @@ class Message:
         Label(self.top_level, text="Background").grid(row=3, column=0)
         OptionMenu(self.top_level, self.background, "", *COLORS).grid(row=3, column=1, sticky="w")
         Label(self.top_level, text="Speed").grid(row=4, column=0)
-        self.speed = Spinbox(self.top_level, from_=1, to=5000, width=4)
-        for i in range(self.message_speed):
-            self.speed.invoke('buttonup')
+        self.speed = Scale(self.top_level, from_=1, to=5000)
+        self.speed.set(self.message_speed)
         self.speed.grid(row=4, column=1, sticky="w")
         Label(self.top_level, text="Direction").grid(row=5, column=0)
         OptionMenu(self.top_level, self.direction, "", "Left", "Right").grid(row=5, column=1, sticky="w")

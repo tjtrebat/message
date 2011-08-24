@@ -91,5 +91,5 @@ class Message:
 
 if __name__ == "__main__":
     root = Tk()
-    Message(root)
+    message = Message(root)
     root.mainloop()
